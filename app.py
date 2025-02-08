@@ -1,4 +1,7 @@
 import streamlit as st
+import plotly.express as px
+import plotly.graph_objects as go
+
 import datetime
 import pandas as pd 
 
@@ -35,11 +38,11 @@ st.set_page_config(page_title="CSV Viewer", layout="wide")
 st.sidebar.title("📌 เมนูหลัก")
 menu = st.sidebar.radio(
     "เลือกเมนู",
-    ["📊 Relative Strength", "📂 Short Sell", "ℹ️ เกี่ยวกับ"]
+    ["📊 Relative Strength", "📂 Short Sell", "🎃 Market Breadth" ,"ℹ️ เกี่ยวกับ"]
 )
 
 if menu == "📊 Relative Strength":
-    st.title('Relative Strength Rating ของ William O’Neil')
+    st.title('Relative Strength Rating ของ William O’Neil ภายใน SET50')
     st.subheader('รายสัปดาห์')
 
     year_selected = st.selectbox("เลือกปี", [2025,2024])
@@ -66,9 +69,58 @@ if menu == "📊 Relative Strength":
 
 if menu == '📂 Short Sell':
    st.title('เร็วๆ นี้ ')
-   
+
 if menu == 'ℹ️ เกี่ยวกับ':
    st.title('เครื่องมือวิเคราะห์การลงทุน')
    st.write("""
     พบ bug แจ้งไอเดียต่างๆ ได้
     """) 
+   
+if menu == "🎃 Market Breadth":
+   st.title('Market Breadth ผลตอบแทนใน SET50')
+   st.subheader('รายสัปดาห์')
+   # สร้างกราฟแท่งด้วย Plotly
+   year_selected = st.selectbox("เลือกปี", [2025,2024])
+
+   df = pd.read_csv(f'rs_datasources/MarketBreadth{year_selected}.csv')
+   #fig = px.bar(df, x="week", y="MarketBreadth", title="📊 MarketBreadth SET50")
+
+   # แสดงกราฟใน Streamlit
+   #st.plotly_chart(fig, use_container_width=True) 
+   # คำนวณค่า Cumulative Sum
+   df["SumMarketBreadth"] = df["MarketBreadth"].cumsum()
+
+   # สร้างกราฟด้วย Plotly
+   fig = go.Figure()
+
+   # กราฟแท่ง
+   fig.add_trace(go.Bar(
+        x=df["week"], 
+        y=df["MarketBreadth"], 
+        name="MarketBreadth",
+        marker_color="blue",
+        opacity=0.7
+    ))
+
+   # กราฟเส้น Cumulative Sum
+   fig.add_trace(go.Scatter(
+        x=df["week"], 
+        y=df["SumMarketBreadth"], 
+        name="ค่าสะสม (Cumsum)", 
+        mode="lines+markers",
+        line=dict(color="red", width=2),
+        yaxis="y2"
+    ))
+
+   # ตั้งค่าแกน Y ให้รองรับสองแกน
+   fig.update_layout(
+        title="📊 กราฟแท่ง + กราฟเส้น Cumulative Sum",
+        xaxis=dict(title="หมวดหมู่"),
+        yaxis=dict(title="ค่าปกติ", side="left"),
+        yaxis2=dict(title="ค่าสะสม", overlaying="y", side="right"),
+        legend=dict(x=0.01, y=0.99),
+        template="plotly_white"
+    )
+
+   # แสดงกราฟใน Streamlit
+   st.plotly_chart(fig, use_container_width=True)
