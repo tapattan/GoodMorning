@@ -115,7 +115,7 @@ if menu == "🎃 Market Breadth":
    # ตั้งค่าแกน Y ให้รองรับสองแกน
    fig.update_layout(
         title="📊 กราฟแท่ง + กราฟเส้น Cumulative Sum",
-        xaxis=dict(title="หมวดหมู่"),
+        #xaxis=dict(title="หมวดหมู่"),
         yaxis=dict(title="ค่าปกติ", side="left"),
         yaxis2=dict(title="ค่าสะสม", overlaying="y", side="right"),
         legend=dict(x=0.01, y=0.99),
