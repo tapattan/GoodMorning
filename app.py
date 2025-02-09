@@ -37,11 +37,15 @@ st.set_page_config(page_title="Start Every Morning Ready to Win Every Investment
                    page_icon="favicon.ico",
                     layout="wide")
 
-st.sidebar.image("logo.png", use_column_width=True)
+with open("logo.png", "rb") as file:
+    image_bytes = file.read()
+
+st.sidebar.image(image_bytes, use_column_width=True)
+
 st.sidebar.title("📌 เมนูหลัก")
 menu = st.sidebar.radio(
     "เลือกเมนู",
-    ["📊 Relative Strength", "📂 Short Sell", "🎃 Market Breadth" ,"ℹ️ เกี่ยวกับ"]
+    ["📊 Relative Strength","🦋 Relative Strength Rank", "📂 Short Sell", "🎃 Market Breadth" ,"ℹ️ เกี่ยวกับ"]
 )
 
 if menu == "📊 Relative Strength":
@@ -69,6 +73,25 @@ if menu == "📊 Relative Strength":
     rp = df[['no','symbol','return']]
     rp = rp.set_index('no')
     st.dataframe(rp, use_container_width=True)
+
+
+if menu == "🦋 Relative Strength Rank":
+    st.title('Relative Strength Rating ของ William O’Neil ภายใน SET50')
+    st.subheader('รายสัปดาห์')
+
+    year_selected = st.selectbox("เลือกปี", [2025,2024])
+
+    st.write(f"คุณเลือก: ปี {year_selected}")
+
+    df = pd.read_csv(f'rs_datasources/report_score_{year_selected}.csv')
+    df = df[['Unnamed: 0','all_match','all_win','all_draw','all_loss','score']]
+    df.columns = ['symbol','all_match','all_win','all_draw','all_loss','score']
+    df = df.set_index('symbol')
+    df = df.sort_values(['score','all_win','all_draw'],ascending=False)
+    # แสดงตารางข้อมูล
+    st.write(f"Relative Strength Rating {year_selected}")
+    st.dataframe(df, use_container_width=True)
+
 
 if menu == '📂 Short Sell':
    st.title('เร็วๆ นี้ ')
