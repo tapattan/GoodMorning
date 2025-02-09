@@ -40,7 +40,7 @@ st.set_page_config(page_title="Start Every Morning Ready to Win Every Investment
 with open("logo.png", "rb") as file:
     image_bytes = file.read()
 
-st.sidebar.image(image_bytes, use_column_width=True)
+st.sidebar.image(image_bytes, use_container_width=True)
 
 st.sidebar.title("📌 เมนูหลัก")
 menu = st.sidebar.radio(
