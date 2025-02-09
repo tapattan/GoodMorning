@@ -33,8 +33,11 @@ def get_weekdays_in_year(year):
     return weeks_data
 
 
-st.set_page_config(page_title="CSV Viewer", layout="wide")
+st.set_page_config(page_title="Start Every Morning Ready to Win Every Investment",
+                   page_icon="favicon.ico",
+                    layout="wide")
 
+st.sidebar.image("logo.png", use_column_width=True)
 st.sidebar.title("📌 เมนูหลัก")
 menu = st.sidebar.radio(
     "เลือกเมนู",
